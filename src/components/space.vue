@@ -114,7 +114,7 @@ watch(() => props.tables, () => {
 
 const _tables = ref([]);
 const _tablesSnapshot = ref()
-const isTablesListEmpty = computed(() => !_tables.value.length)
+const isTablesListEmpty = computed(() => !_tables.value?.length)
 
 onMounted(() => {
 	document.querySelector('._tables-grid')
@@ -125,7 +125,6 @@ onMounted(() => {
 	document.addEventListener('mouseup', onTableDragEnd);
 	document.addEventListener('touchend', onTableDragEnd);
 	window.addEventListener('resize', onResize)
-	console.log(props.tables)
 	updateInnerTablesValue()
 });
 
@@ -140,7 +139,8 @@ const onSave = () => {
 }
 
 const onReset = () => {
-	_tables.value = JSON.parse(_tablesSnapshot.value)
+	_tables.value = JSON.parse(_tablesSnapshot.value).map(transformTableData)
+	_tablesSnapshot.value = JSON.stringify(_tables.value)
 }
 
 const isBtnsDisabled = computed(() => _tablesSnapshot.value === JSON.stringify(_tables.value))
