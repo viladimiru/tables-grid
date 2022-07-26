@@ -31,7 +31,7 @@ onMounted(() => {
 		];
 		isLoading.value = false;
 		clearTimeout(timeOut);
-	}, 1500);
+	}, 500);
 });
 
 const tables = ref();
