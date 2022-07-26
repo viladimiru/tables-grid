@@ -136,7 +136,6 @@ const _tablesSnapshot = ref();
 const isTablesListEmpty = computed(() => !_tables.value?.length);
 
 onMounted(() => {
-	document.querySelector('._tables-grid');
 	onResize();
 	document.addEventListener('mousedown', handleChanges);
 	document.addEventListener('mousemove', handleChanges);
