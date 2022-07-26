@@ -89,7 +89,7 @@
 			</div>
 			<div class="tables-control">
 				<div class="tables-control__new-tables">
-					<div class="table table--placeholder" @click="onCreateNewTable"></div>
+					<div class="table table--placeholder" @click="onCreateNewTable(false)"></div>
 					<div
 						class="table circle table--placeholder"
 						@click="onCreateNewTable(true)"
@@ -473,7 +473,7 @@ const onCreateNewTable = (rounded = false) => {
 			width: 3,
 			height: 3,
 			title: ''.concat('Стол ', _tables.value.length + 1),
-			x: 0,
+			x: rounded ? 3 : 0,
 			y: gridHeight.value - 3,
 			isRounded: rounded,
 		})
