@@ -68,11 +68,6 @@
 						<span class="table-guests" @click="onEditTableTitle(i)">
 							{{ table.title }}
 						</span>
-						<!--<input
-							readonly="true"
-							class="table-guests"
-							:value="table.numberOfGuests"
-						/>-->
 					</div>
 					<div
 						class="table-resize-bottom"
