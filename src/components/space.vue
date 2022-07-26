@@ -84,10 +84,21 @@
 			</div>
 			<div class="tables-control">
 				<div class="tables-control__new-tables">
-					<div class="table table--placeholder" @click="onCreateNewTable(false)"></div>
+					<div
+						class="table table--placeholder"
+						@click="onCreateNewTable(false)"
+						:style="{
+							width: ''.concat(gridSize * 3, 'px'),
+							height: ''.concat(gridSize * 3, 'px'),
+						}"
+					></div>
 					<div
 						class="table circle table--placeholder"
 						@click="onCreateNewTable(true)"
+						:style="{
+							width: ''.concat(gridSize * 3, 'px'),
+							height: ''.concat(gridSize * 3, 'px'),
+						}"
 					></div>
 				</div>
 				<div class="tables-control__actions">
@@ -569,8 +580,6 @@ body.is-resizing-y {
 		opacity: 0.8;
 	}
 	&--placeholder {
-		width: 60px;
-		height: 60px;
 		position: relative;
 		opacity: 0.6;
 		transition: 0.2s ease-in-out;
