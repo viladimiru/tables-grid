@@ -127,7 +127,6 @@ watch([gridSize, gridWidth, gridHeight], () => {
 watch(
 	() => props.tables,
 	() => {
-		console.log(props.tables);
 		updateInnerTablesValue();
 	}
 );
