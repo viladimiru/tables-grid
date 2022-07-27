@@ -1,5 +1,10 @@
 <template>
 	<Space :tables="tables" @on-save="onSave" :is-loading="isLoading" />
+	<div style="display: flex; justify-content: center">
+		<pre>
+			{{ tables }}
+		</pre>
+	</div>
 </template>
 
 <script setup>
@@ -40,6 +45,7 @@ const onSave = (v) => {
 	isLoading.value = true;
 	const timeOut = setTimeout(() => {
 		tables.value = v;
+		console.log(v)
 		isLoading.value = false;
 		clearTimeout(timeOut);
 	}, 500);

@@ -164,7 +164,15 @@ const updateInnerTablesValue = () => {
 };
 
 const onSave = () => {
-	emit('on-save', _tables.value);
+	emit('on-save', _tables.value.map(({x, y, width, height, isRounded, title}) => (
+		{
+			width: Math.round(width),
+			height: Math.round(height),
+			title,
+			x: Math.round(x),
+			y: Math.round(y),
+			isRounded,
+		})));
 };
 
 const onReset = () => {
