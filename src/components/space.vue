@@ -564,7 +564,7 @@ body.is-resizing-y {
 }
 .tables-grid {
 	position: relative;
-	background-image: url('assets/grid-bg.png');
+	background-image: url('/assets/grid-bg.png');
 }
 .table-wrapper {
 	position: absolute;
