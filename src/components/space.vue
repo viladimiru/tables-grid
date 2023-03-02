@@ -632,7 +632,7 @@ body.is-resizing-y {
 
 .ui-icon,
 .ui-widget-content .ui-icon {
-	background-image: url('assets/ui-icons.png');
+	background-image: url('/assets/ui-icons.png');
 }
 
 .ui-icon {
