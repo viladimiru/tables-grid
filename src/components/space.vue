@@ -102,8 +102,8 @@
 					></div>
 				</div>
 				<div class="tables-control__actions">
-					<button @click="onReset" :disabled="isBtnsDisabled">Отмена</button>
-					<button @click="onSave" :disabled="isBtnsDisabled">Сохранить</button>
+					<button @click="onReset" :disabled="isBtnsDisabled">Cancel</button>
+					<button @click="onSave" :disabled="isBtnsDisabled">Save</button>
 				</div>
 			</div>
 		</div>
@@ -112,8 +112,8 @@
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { throttle } from 'lodash';
 import { computed } from '@vue/reactivity';
+import { throttle } from '../utils';
 
 const props = defineProps({
 	tables: Array,
@@ -212,7 +212,7 @@ function onResize() {
 }
 
 function onEditTableTitle(i) {
-	const result = prompt('Введите новое название стола', _tables.value[i].title);
+	const result = prompt('Enter new table name', _tables.value[i].title);
 	if (result) {
 		_tables.value[i].title = result;
 	}
@@ -484,7 +484,7 @@ const onCreateNewTable = (rounded = false) => {
 		transformTableData({
 			width: 3,
 			height: 3,
-			title: ''.concat('Стол ', _tables.value.length + 1),
+			title: ''.concat('Table ', _tables.value.length + 1),
 			x: rounded ? 3 : 0,
 			y: gridHeight.value - 3,
 			isRounded: rounded,
@@ -536,7 +536,7 @@ body.is-resizing-y {
 	.tables-grid {
 		opacity: 0.7;
 		&:after {
-			content: 'Список пуст';
+			content: 'Scheme is empty';
 			position: absolute;
 			left: 50%;
 			top: 50%;
