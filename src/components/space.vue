@@ -525,7 +525,7 @@ body.is-resizing-y {
 	pointer-events: none;
 	position: relative;
 	&:after {
-		content: 'Загрузка...';
+		content: 'Loading...';
 		position: absolute;
 		left: 50%;
 		top: 50%;
