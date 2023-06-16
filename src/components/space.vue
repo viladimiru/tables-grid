@@ -148,9 +148,9 @@ const isTablesListEmpty = computed(() => !_tables.value?.length);
 
 onMounted(() => {
 	onResize();
-	document.addEventListener('mousedown', handleChanges);
-	document.addEventListener('mousemove', handleChanges);
-	document.addEventListener('touchmove', handleChanges);
+	document.addEventListener('mousedown', handleChanges, {passive: false});
+	document.addEventListener('mousemove', handleChanges, {passive: false});
+	document.addEventListener('touchmove', handleChanges, {passive: false});
 	document.addEventListener('mouseup', onTableDragEnd);
 	document.addEventListener('touchend', onTableDragEnd);
 	window.addEventListener('resize', onResize);
@@ -223,15 +223,21 @@ const onDelete = (i) => {
 };
 
 function handleChanges(e) {
-	if (resizeItemIndex.value !== -1) {
+	const isResizing = resizeItemIndex.value !== -1;
+	const isResizingY = resizeYItemIndex.value !== -1;
+	const isDragging = dragItemIndex.value !== -1;
+	if (isResizing || isResizingY || isDragging) {
+		e.preventDefault()
+	}
+	if (isResizing) {
 		throttleOnResize(e, _tables.value[resizeItemIndex.value]);
 		return;
 	}
-	if (resizeYItemIndex.value !== -1) {
+	if (isResizingY) {
 		throttleOnResize(e, _tables.value[resizeYItemIndex.value]);
 		return;
 	}
-	if (dragItemIndex.value === -1) return;
+	if (!isDragging) return;
 	throttleOnDrag(e, _tables.value[dragItemIndex.value]);
 }
 
