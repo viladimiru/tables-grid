@@ -6,26 +6,6 @@
 			'is-empty': !isLoading && isTablesListEmpty,
 		}"
 	>
-		<div class="grid-controls">
-			<label for="grid-size">Grid size: {{ gridSize }}</label>
-			<input id="grid-size" type="range" v-model="gridSize" min="10" max="40" />
-			<label for="grid-width">Grid width: {{ gridWidth }}</label>
-			<input
-				id="grid-width"
-				type="range"
-				v-model="gridWidth"
-				min="10"
-				max="40"
-			/>
-			<label for="grid-height">Grid height: {{ gridHeight }}</label>
-			<input
-				id="grid-height"
-				type="range"
-				v-model="gridHeight"
-				min="10"
-				max="40"
-			/>
-		</div>
 		<div class="tables-block">
 			<div
 				class="tables-grid"
@@ -82,30 +62,6 @@
 					></div>
 				</div>
 			</div>
-			<div class="tables-control">
-				<div class="tables-control__new-tables">
-					<div
-						class="table table--placeholder"
-						@click="onCreateNewTable(false)"
-						:style="{
-							width: ''.concat(gridSize * 3, 'px'),
-							height: ''.concat(gridSize * 3, 'px'),
-						}"
-					></div>
-					<div
-						class="table circle table--placeholder"
-						@click="onCreateNewTable(true)"
-						:style="{
-							width: ''.concat(gridSize * 3, 'px'),
-							height: ''.concat(gridSize * 3, 'px'),
-						}"
-					></div>
-				</div>
-				<div class="tables-control__actions">
-					<button @click="onReset" :disabled="isBtnsDisabled">Cancel</button>
-					<button @click="onSave" :disabled="isBtnsDisabled">Save</button>
-				</div>
-			</div>
 		</div>
 	</div>
 </template>
@@ -118,13 +74,17 @@ import { throttle } from '../utils';
 const props = defineProps({
 	tables: Array,
 	isLoading: Boolean,
+	gridSize: Number,
+	gridWidth: Number,
+	gridHeight: Number
 });
+
 const emit = defineEmits(['on-save']);
 
-const gridSize = ref(20);
-const gridWidth = ref(37);
-const gridHeight = ref(23);
-const BG_GRID_SIZE = 20;
+const gridSize = ref(props.gridSize);
+
+const gridWidth = ref(props.gridWidth);
+const gridHeight = ref(props.gridHeight);
 
 const dragItemIndex = ref(-1);
 const resizeItemIndex = ref(-1);
@@ -148,6 +108,15 @@ const isTablesListEmpty = computed(() => !_tables.value?.length);
 
 onMounted(() => {
 	onResize();
+	if (!props.gridSize) {
+		const {width, height} = gridBoundingPosition.value
+		
+		if (width > height || gridWidth.value > gridHeight.value) {
+			gridSize.value = width / gridWidth.value;
+		} else {
+			gridSize.value = height / gridHeight.value;
+		}
+	}
 	document.addEventListener('mousedown', handleChanges, {passive: false});
 	document.addEventListener('mousemove', handleChanges, {passive: false});
 	document.addEventListener('touchmove', handleChanges, {passive: false});
@@ -163,26 +132,6 @@ const updateInnerTablesValue = () => {
 	_tablesSnapshot.value = JSON.stringify(_tables.value);
 };
 
-const onSave = () => {
-	emit('on-save', _tables.value.map(({x, y, width, height, isRounded, title}) => (
-		{
-			width: Math.round(width),
-			height: Math.round(height),
-			title,
-			x: Math.round(x),
-			y: Math.round(y),
-			isRounded,
-		})));
-};
-
-const onReset = () => {
-	_tables.value = JSON.parse(_tablesSnapshot.value).map(transformTableData);
-	_tablesSnapshot.value = JSON.stringify(_tables.value);
-};
-
-const isBtnsDisabled = computed(
-	() => _tablesSnapshot.value === JSON.stringify(_tables.value)
-);
 
 onBeforeUnmount(() => {
 	document.removeEventListener('mousedown', handleChanges);
@@ -195,14 +144,14 @@ onBeforeUnmount(() => {
 
 const getGridWidth = computed(() => {
 	return ''.concat(
-		gridSize.value * gridWidth.value + gridSize.value / BG_GRID_SIZE,
+		gridSize.value * gridWidth.value + gridSize.value / gridSize.value,
 		'px'
 	);
 });
 
 const getGridHeight = computed(() => {
 	return ''.concat(
-		gridSize.value * gridHeight.value + gridSize.value / BG_GRID_SIZE,
+		gridSize.value * gridHeight.value + gridSize.value / gridSize.value,
 		'px'
 	);
 });
@@ -267,7 +216,6 @@ const throttleOnResize = throttle(onTableResize, 10);
 
 function onTableDrag(e, table) {
 	const { clientX, clientY, updateOnDrag } = initializeData(e, table);
-
 	if (clientX === 0 && clientY === 0) {
 		return;
 	}
@@ -345,7 +293,6 @@ const transformTableData = (v, isResized = false) => {
 			v.x = 0;
 		}
 	}
-
 	v.widthPx = getAsidePxUnits(v.width);
 	v.heightPx = getAsidePxUnits(v.height);
 	v.left = getAsidePxUnits(v.x);
@@ -399,7 +346,10 @@ const initializeData = (e, table) => {
 		table.dragStartCoordinates[1] = clientY;
 	};
 	const updateOnDrag = () => {
-		const { left, top, right, bottom } = gridBoundingPosition.value;
+		const {offsetLeft: left, offsetHeight, offsetTop: top, offsetWidth} = grid.value;
+		const bottom = top + offsetHeight
+		const right = left + offsetWidth
+
 		if (left > clientX) {
 			xDiff = 0;
 			table.x = 0;
@@ -500,7 +450,7 @@ const onCreateNewTable = (rounded = false) => {
 const getAsidePxUnits = (v) =>
 	''.concat(
 		Math.round((gridSize.value * v) / gridSize.value) * gridSize.value +
-			gridSize.value / BG_GRID_SIZE,
+			gridSize.value / gridSize.value,
 		'px'
 	);
 </script>
@@ -525,6 +475,10 @@ body.is-resizing {
 }
 body.is-resizing-y {
 	cursor: s-resize;
+}
+.tables-view {
+	width: 100%;
+	height: 100%;
 }
 .tables-view.is-loading {
 	opacity: 0.7;
@@ -552,25 +506,17 @@ body.is-resizing-y {
 }
 .tables-block {
 	display: grid;
-	grid-template-rows: auto auto;
-	justify-content: center;
-}
-.tables-control {
-	justify-content: space-between;
-	align-items: center;
-	display: flex;
-	&__new-tables {
-		display: flex;
-	}
-	&__actions {
-		& > button:not(:last-child) {
-			margin-right: 10px;
-		}
-	}
+	grid-template-rows: 1fr auto;
+	width: 100%;
+	height: 100%;
 }
 .tables-grid {
 	position: relative;
 	background-image: url('/assets/grid-bg.png');
+	width: 100%;
+	height: 100%;
+	margin: auto;
+	align-self: center;
 }
 .table-wrapper {
 	position: absolute;
